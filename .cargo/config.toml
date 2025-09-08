@@ -23,5 +23,10 @@ rustflags = [
     "link-arg=-fuse-ld=lld",
 ]
 
+[profile.dev]
+incremental = true
+debug = 1
+lto = "off"
+
 [env]
 MACOSX_DEPLOYMENT_TARGET = "10.15.7"

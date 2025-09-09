@@ -1,0 +1,39 @@
+-- Sep 9
+found that if the file isn't already using hard tabs, then the indent is being put at the wrong spot
+
+last logs when hitting enter for `if (1) {<cursor here>}`:
+2025-09-08T19:21:19-05:00 INFO  [editor] DEBUG: Edit: (708..708, "\n  \n  "), prevent_auto_indent: false
+2025-09-08T19:21:19-05:00 INFO  [editor] DEBUG: auto_indent_edits.len: 1, edits.len(): 0
+2025-09-08T19:21:19-05:00 INFO  [editor] DEBUG: editor.autoindent_mode: Some(EachLine)
+2025-09-08T19:21:19-05:00 INFO  [editor] DEBUG: Calling edit_with_autoindent with 1 edits
+2025-09-08T19:21:19-05:00 INFO  [editor] DEBUG: edit_with_autoindent: autoindent_mode = Some(EachLine)
+2025-09-08T19:21:19-05:00 INFO  [editor] DEBUG: edit_with_autoindent: editing buffer with autoindent mode
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Auto-indent request for EachLine
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: before_edit length = 1356
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: language at range 708: Some(LanguageName("C")), auto_indent = true
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: processing edit 0: range=708..708, new_text="\n  \n  "
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Language indent size at: language=Some(LanguageName("C")), hard_tabs=true, tab_size=4
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: returning IndentSize::tab()
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: created 1 autoindent request entries
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: pushed autoindent request
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Language indent size at: language=Some(LanguageName("C")), hard_tabs=true, tab_size=4
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: returning IndentSize::tab()
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: with_delta called, direction: Greater, size: IndentSize { len: 1, kind: Tab }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: request_autoindent, autoindent_requests.len = 1
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: compute_autoindents returned Some
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: language_indent_sizes_by_new_row = [(36, IndentSize { len: 1, kind: Tab })]
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: initial language_indent_size = IndentSize { len: 1, kind: Tab }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: with_delta called, direction: Greater, size: IndentSize { len: 1, kind: Tab }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: with_delta called, direction: Equal, size: IndentSize { len: 1, kind: Tab }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: apply_autoindents called, applying 2 indents
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Row 36, indent_size IndentSize { len: 2, kind: Space }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Row 37, indent_size IndentSize { len: 2, kind: Space }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: apply_autoindents called, applying 2 indents
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Row 36, Indent size IndentSize { len: 2, kind: Space }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Row 37, Indent size IndentSize { len: 2, kind: Space }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Language indent size at: language=Some(LanguageName("C")), hard_tabs=true, tab_size=4
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: returning IndentSize::tab()
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: with_delta called, direction: Greater, size: IndentSize { len: 1, kind: Tab }
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: Language indent size at: language=Some(LanguageName("C")), hard_tabs=true, tab_size=4
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: returning IndentSize::tab()
+2025-09-08T19:21:19-05:00 INFO  [language::buffer] DEBUG: with_delta called, direction: Greater, size: IndentSize { len: 1, kind: Tab }

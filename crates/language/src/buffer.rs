@@ -1604,14 +1604,23 @@ impl Buffer {
     }
 
     fn request_autoindent(&mut self, cx: &mut Context<Self>) {
+        log::info!("DEBUG: request_autoindent, autoindent_requests.len = {:?}", self.autoindent_requests.len());
         if let Some(indent_sizes) = self.compute_autoindents() {
+            log::info!("DEBUG: compute_autoindents returned Some");
             let indent_sizes = cx.background_spawn(indent_sizes);
             match cx
                 .background_executor()
                 .block_with_timeout(Duration::from_micros(500), indent_sizes)
             {
-                Ok(indent_sizes) => self.apply_autoindents(indent_sizes, cx),
+                Ok(indent_sizes) => {
+                    log::info!("DEBUG: apply_autoindents called, applying {:?} indents", indent_sizes.len());
+                    for (row, indent_size) in &indent_sizes {
+                        log::info!("DEBUG: Row {:?}, indent_size {:?}", row, indent_size);
+                    }
+                    self.apply_autoindents(indent_sizes, cx)
+                },
                 Err(indent_sizes) => {
+                    log::info!("DEBUG: apply_autoindents timed out, spawning new task");
                     self.pending_autoindent = Some(cx.spawn(async move |this, cx| {
                         let indent_sizes = indent_sizes.await;
                         this.update(cx, |this, cx| {
@@ -1622,6 +1631,7 @@ impl Buffer {
                 }
             }
         } else {
+            log::info!("DEBUG: request_autoindent, no indents to apply");
             self.autoindent_requests.clear();
             for tx in self.wait_for_autoindent_txs.drain(..) {
                 tx.send(()).ok();
@@ -1666,15 +1676,23 @@ impl Buffer {
                 let mut old_suggestions = BTreeMap::<u32, (IndentSize, bool)>::default();
                 let old_edited_ranges =
                     contiguous_ranges(old_to_new_rows.keys().copied(), max_rows_between_yields);
+                log::info!("DEBUG: language_indent_sizes_by_new_row = {:?}", language_indent_sizes_by_new_row);
                 let mut language_indent_sizes = language_indent_sizes_by_new_row.iter().peekable();
-                let mut language_indent_size = IndentSize::default();
+                // let mut language_indent_size = IndentSize::default();
+                let mut language_indent_size = language_indent_sizes_by_new_row
+                    .first()
+                    .map(|(_, size)| *size)
+                    .unwrap_or_else(|| IndentSize::default());
+                log::info!("DEBUG: initial language_indent_size = {:?}", language_indent_size);
                 for old_edited_range in old_edited_ranges {
+                    log::info!("DEBUG: processing old_edited_range = {:?}", old_edited_range);
                     let suggestions = request
                         .before_edit
                         .suggest_autoindents(old_edited_range.clone())
                         .into_iter()
                         .flatten();
                     for (old_row, suggestion) in old_edited_range.zip(suggestions) {
+                        log::info!("DEBUG: old_row = {:?}, suggestion = {:?}", old_row, suggestion);
                         if let Some(suggestion) = suggestion {
                             let new_row = *old_to_new_rows.get(&old_row).unwrap();
 
@@ -1708,7 +1726,11 @@ impl Buffer {
                 // Compute new suggestions for each line, but only include them in the result
                 // if they differ from the old suggestion for that line.
                 let mut language_indent_sizes = language_indent_sizes_by_new_row.iter().peekable();
-                let mut language_indent_size = IndentSize::default();
+                // let mut language_indent_size = IndentSize::default();
+                let mut language_indent_size = language_indent_sizes_by_new_row
+                    .first()
+                    .map(|(_, size)| *size)
+                    .unwrap_or_else(|| IndentSize::default());
                 for (row_range, original_indent_column) in row_ranges {
                     let new_edited_row_range = if request.is_block_mode {
                         row_range.start..row_range.start + 1
@@ -1805,6 +1827,10 @@ impl Buffer {
         indent_sizes: BTreeMap<u32, IndentSize>,
         cx: &mut Context<Self>,
     ) {
+        log::info!("DEBUG: apply_autoindents called, applying {:?} indents", indent_sizes.len());
+        for (row, indent_size) in &indent_sizes {
+            log::info!("DEBUG: Row {:?}, Indent size {:?}", row, indent_size);
+        }
         self.autoindent_requests.clear();
         for tx in self.wait_for_autoindent_txs.drain(..) {
             tx.send(()).ok();
@@ -2313,6 +2339,8 @@ impl Buffer {
         let edit_id = edit_operation.timestamp();
 
         if let Some((before_edit, mode)) = autoindent_request {
+            log::info!("DEBUG: Auto-indent request for {:?}", mode);
+            log::info!("DEBUG: before_edit length = {:?}", before_edit.len());
             let mut delta = 0isize;
             let mut previous_setting = None;
             let entries: Vec<_> = edits
@@ -2325,17 +2353,24 @@ impl Buffer {
                     if let Some((cached_language_id, auto_indent)) = previous_setting
                         && cached_language_id == language_id
                     {
+                        log::info!("DEBUG: using cached auto_indent for language {:?} = {}", language_id, auto_indent);
                         auto_indent
                     } else {
                         // The auto-indent setting is not present in editorconfigs, hence
                         // we can avoid passing the file here.
                         let auto_indent =
                             language_settings(language.map(|l| l.name()), None, cx).auto_indent;
+                        log::info!("DEBUG: language at range {:?}: {:?}, auto_indent = {:?}",
+                            range.start,
+                            language.map(|l| l.name()),
+                            auto_indent
+                        );
                         previous_setting = Some((language_id, auto_indent));
                         auto_indent
                     }
                 })
                 .map(|((ix, (range, _)), new_text)| {
+                    log::info!("DEBUG: processing edit {}: range={:?}, new_text={:?}", ix, range, new_text);
                     let new_text_length = new_text.len();
                     let old_start = range.start.to_point(&before_edit);
                     let new_start = (delta + range.start as isize) as usize;
@@ -2407,6 +2442,7 @@ impl Buffer {
                     }
                 })
                 .collect();
+            log::info!("DEBUG: created {} autoindent request entries", entries.len());
 
             if !entries.is_empty() {
                 self.autoindent_requests.push(Arc::new(AutoindentRequest {
@@ -2415,7 +2451,12 @@ impl Buffer {
                     is_block_mode: matches!(mode, AutoindentMode::Block { .. }),
                     ignore_empty_lines: false,
                 }));
+                log::info!("DEBUG: pushed autoindent request");
+            } else {
+                log::info!("DEBUG: no autoindent request entries");
             }
+        } else {
+            log::info!("DEBUG: No auto-indent request");
         }
 
         self.end_transaction(cx);
@@ -2921,14 +2962,22 @@ impl BufferSnapshot {
     /// Returns [`IndentSize`] for a given position that respects user settings
     /// and language preferences.
     pub fn language_indent_size_at<T: ToOffset>(&self, position: T, cx: &App) -> IndentSize {
+        let language = self.language_at(position);
         let settings = language_settings(
-            self.language_at(position).map(|l| l.name()),
+            language.map(|l| l.name()),
             self.file(),
             cx,
         );
+        log::info!("DEBUG: Language indent size at: language={:?}, hard_tabs={:?}, tab_size={:?}",
+            language.map(|l| l.name()),
+            settings.hard_tabs,
+            settings.tab_size
+        );
         if settings.hard_tabs {
+            log::info!("DEBUG: returning IndentSize::tab()");
             IndentSize::tab()
         } else {
+            log::info!("DEBUG: returning IndentSize::spaces({:?})", settings.tab_size.get());
             IndentSize::spaces(settings.tab_size.get())
         }
     }
@@ -4905,6 +4954,7 @@ impl IndentSize {
     /// Consumes the current [`IndentSize`] and returns a new one that has
     /// been shrunk or enlarged by the given size along the given direction.
     pub fn with_delta(mut self, direction: Ordering, size: IndentSize) -> Self {
+        log::info!("DEBUG: with_delta called, direction: {:?}, size: {:?}", direction, size);
         match direction {
             Ordering::Less => {
                 if self.kind == size.kind && self.len >= size.len {

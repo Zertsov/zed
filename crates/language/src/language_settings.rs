@@ -1126,6 +1126,13 @@ impl AllLanguageSettings {
             .and_then(|name| self.languages.get(name))
             .unwrap_or(&self.defaults);
 
+        // log::info!("DEBUG: Language settings for {:?}: auto_indent: {:?}, hard_tabs: {:?}, tab_size: {:?}",
+        //     language_name.map(|name| name.as_ref()),
+        //     settings.auto_indent,
+        //     settings.hard_tabs,
+        //     settings.tab_size
+        // );
+
         let editorconfig_properties = location.and_then(|location| {
             cx.global::<SettingsStore>()
                 .editorconfig_properties(location.worktree_id, location.path)

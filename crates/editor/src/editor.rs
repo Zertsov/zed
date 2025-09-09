@@ -3401,10 +3401,14 @@ impl Editor {
         T: Into<Arc<str>>,
     {
         if self.read_only(cx) {
+            log::info!("DEBUG: edit_with_autoindent buffer is read only");
             return;
         }
 
+        log::info!("DEBUG: edit_with_autoindent: autoindent_mode = {:?}", self.autoindent_mode);
+
         self.buffer.update(cx, |buffer, cx| {
+            log::info!("DEBUG: edit_with_autoindent: editing buffer with autoindent mode");
             buffer.edit(edits, self.autoindent_mode.clone(), cx)
         });
     }
@@ -4675,17 +4679,24 @@ impl Editor {
             let mut auto_indent_edits = Vec::new();
             let mut edits = Vec::new();
             for (edit, prevent_auto_indent) in edits_with_flags {
+                log::info!("DEBUG: Edit: {:?}, prevent_auto_indent: {}", edit, prevent_auto_indent);
                 if prevent_auto_indent {
                     edits.push(edit);
                 } else {
                     auto_indent_edits.push(edit);
                 }
             }
+            let edits_len = edits.len();
             if !edits.is_empty() {
                 this.edit(edits, cx);
             }
+            log::info!("DEBUG: auto_indent_edits.len: {}, edits.len(): {}", auto_indent_edits.len(), edits_len);
+            log::info!("DEBUG: editor.autoindent_mode: {:?}", this.autoindent_mode);
             if !auto_indent_edits.is_empty() {
+                log::info!("DEBUG: Calling edit_with_autoindent with {} edits", auto_indent_edits.len());
                 this.edit_with_autoindent(auto_indent_edits, cx);
+            } else {
+                log::info!("DEBUG: No autoindent edits")
             }
 
             let buffer = this.buffer.read(cx).snapshot(cx);

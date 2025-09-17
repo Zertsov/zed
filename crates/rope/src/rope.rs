@@ -784,10 +784,23 @@ impl<'a> Chunks<'a> {
             slice_start..slice_end
         };
 
-        let bitmask = (1u128 << slice_range.end as u128).saturating_sub(1);
+        let slice_len = slice_range.end.saturating_sub(slice_range.start);
+        let bitmask = if slice_len >= chunk::MAX_BASE {
+            u128::MAX
+        } else {
+            (1u128 << slice_len) - 1
+        };
 
-        let chars = (chunk.chars() & bitmask) >> slice_range.start;
-        let tabs = (chunk.tabs & bitmask) >> slice_range.start;
+        let chars = chunk
+            .chars()
+            .checked_shr(slice_range.start as u32)
+            .unwrap_or(0)
+            & bitmask;
+        let tabs = chunk
+            .tabs
+            .checked_shr(slice_range.start as u32)
+            .unwrap_or(0)
+            & bitmask;
 
         Some(ChunkBitmaps {
             text: &chunk.text[slice_range],
@@ -823,21 +836,30 @@ impl<'a> Chunks<'a> {
 
         let chunk = self.chunks.item()?;
         let chunk_start = *self.chunks.start();
-        let slice_range = if self.reversed {
-            let slice_start = cmp::max(chunk_start, self.range.start) - chunk_start;
-            let slice_end = self.offset - chunk_start;
-            slice_start..slice_end
+        let slice_start = if self.reversed {
+            cmp::max(chunk_start, self.range.start) - chunk_start
         } else {
-            let slice_start = self.offset - chunk_start;
-            let slice_end = cmp::min(self.chunks.end(), self.range.end) - chunk_start;
-            slice_start..slice_end
+            self.offset - chunk_start
         };
+        let slice_end = if self.reversed {
+            self.offset - chunk_start
+        } else {
+            cmp::min(self.chunks.end(), self.range.end) - chunk_start
+        };
+
+        let slice_range = slice_start..slice_end;
         let chunk_start_offset = slice_range.start;
-        let slice_text = &chunk.text[slice_range];
+        let slice_text = &chunk.text[slice_start..slice_end];
 
         // Shift the tabs to align with our slice window
-        let shifted_tabs = chunk.tabs >> chunk_start_offset;
-        let shifted_chars = chunk.chars() >> chunk_start_offset;
+        let shifted_tabs = chunk
+            .tabs
+            .checked_shr(chunk_start_offset as u32)
+            .unwrap_or(0);
+        let shifted_chars = chunk
+            .chars()
+            .checked_shr(chunk_start_offset as u32)
+            .unwrap_or(0);
 
         Some(ChunkBitmaps {
             text: slice_text,

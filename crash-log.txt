@@ -1,0 +1,163 @@
+thread 'main' panicked at crates/rope/src/rope.rs:787:23:
+attempt to shift left with overflow
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/std/src/panicking.rs:697:5
+   1: core::panicking::panic_fmt
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/core/src/panicking.rs:75:14
+   2: core::panicking::panic_const::panic_const_shl_overflow
+             at /rustc/29483883eed69d5fb4db01964cdf2af4d86e9cb2/library/core/src/panicking.rs:175:17
+   3: <rope::Chunks>::peak_with_bitmaps
+             at ./crates/rope/src/rope.rs:787:23
+   4: <rope::ChunkWithBitmaps as core::iter::traits::iterator::Iterator>::next
+             at ./crates/rope/src/rope.rs:901:36
+   5: <editor::display_map::inlay_map::InlayChunks as core::iter::traits::iterator::Iterator>::next::{closure#6}
+             at ./crates/editor/src/display_map/inlay_map.rs:424:57
+   6: <core::option::Option<rope::ChunkBitmaps>>::get_or_insert_with::<<editor::display_map::inlay_map::InlayChunks as core::iter::traits::iterator::Iterator>::next::{closure#6}>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:1753:26
+   7: <editor::display_map::inlay_map::InlayChunks as core::iter::traits::iterator::Iterator>::next
+             at ./crates/editor/src/display_map/inlay_map.rs:424:22
+   8: <editor::display_map::fold_map::FoldChunks as core::iter::traits::iterator::Iterator>::next
+             at ./crates/editor/src/display_map/fold_map.rs:1434:50
+   9: <editor::display_map::tab_map::TabStopCursor<editor::display_map::fold_map::FoldChunks>>::seek::{closure#0}
+             at ./crates/editor/src/display_map/tab_map.rs:1495:37
+  10: <core::option::Option<(editor::display_map::fold_map::Chunk, u32)>>::or_else::<<editor::display_map::tab_map::TabStopCursor<editor::display_map::fold_map::FoldChunks>>::seek::{closure#0}>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:1609:21
+  11: <editor::display_map::tab_map::TabStopCursor<editor::display_map::fold_map::FoldChunks>>::seek
+             at ./crates/editor/src/display_map/tab_map.rs:1495:14
+  12: <editor::display_map::tab_map::TabSnapshot>::expand_tabs::<editor::display_map::fold_map::FoldChunks>
+             at ./crates/editor/src/display_map/tab_map.rs:354:43
+  13: <editor::display_map::tab_map::TabSnapshot>::to_tab_point
+             at ./crates/editor/src/display_map/tab_map.rs:306:29
+  14: <editor::display_map::tab_map::TabMap>::sync
+             at ./crates/editor/src/display_map/tab_map.rs:143:77
+  15: <editor::display_map::DisplayMap>::splice_inlays
+             at ./crates/editor/src/display_map.rs:595:46
+  16: <editor::Editor>::splice_inlays::{closure#0}
+             at ./crates/editor/src/editor.rs:5360:25
+  17: <gpui::app::App as gpui::AppContext>::update_entity::<editor::display_map::DisplayMap, (), <editor::Editor>::splice_inlays::{closure#0}>::{closure#0}
+             at ./crates/gpui/src/app.rs:2150:26
+  18: <gpui::app::App>::update::<(), <gpui::app::App as gpui::AppContext>::update_entity<editor::display_map::DisplayMap, (), <editor::Editor>::splice_inlays::{closure#0}>::{closure#0}>
+             at ./crates/gpui/src/app.rs:764:22
+  19: <gpui::app::App as gpui::AppContext>::update_entity::<editor::display_map::DisplayMap, (), <editor::Editor>::splice_inlays::{closure#0}>
+             at ./crates/gpui/src/app.rs:2148:14
+  20: <gpui::app::context::Context<editor::Editor> as gpui::AppContext>::update_entity::<editor::display_map::DisplayMap, (), <editor::Editor>::splice_inlays::{closure#0}>
+             at ./crates/gpui/src/app/context.rs:735:18
+  21: <gpui::app::entity_map::Entity<editor::display_map::DisplayMap>>::update::<(), gpui::app::context::Context<editor::Editor>, <editor::Editor>::splice_inlays::{closure#0}>
+             at ./crates/gpui/src/app/entity_map.rs:437:12
+  22: <editor::Editor>::splice_inlays
+             at ./crates/editor/src/editor.rs:5359:26
+  23: <editor::Editor>::update_visible_edit_prediction
+             at ./crates/editor/src/editor.rs:7935:26
+  24: <editor::Editor>::set_edit_prediction_provider::<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}
+             at ./crates/editor/src/editor.rs:2823:26
+  25: <gpui::app::context::Context<editor::Editor>>::observe_in::<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}::{closure#0}
+             at ./crates/gpui/src/app/context.rs:315:33
+  26: <gpui::app::App as gpui::AppContext>::update_entity::<editor::Editor, (), <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}::{closure#0}>::{closure#0}
+             at ./crates/gpui/src/app.rs:2150:26
+  27: <gpui::app::App>::update::<(), <gpui::app::App as gpui::AppContext>::update_entity<editor::Editor, (), <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}::{closure#0}>::{closure#0}>
+             at ./crates/gpui/src/app.rs:764:22
+  28: <gpui::app::App as gpui::AppContext>::update_entity::<editor::Editor, (), <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}::{closure#0}>
+             at ./crates/gpui/src/app.rs:2148:14
+  29: <gpui::app::entity_map::Entity<editor::Editor>>::update::<(), gpui::app::App, <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}::{closure#0}>
+             at ./crates/gpui/src/app/entity_map.rs:437:12
+  30: <gpui::app::context::Context<editor::Editor>>::observe_in::<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}
+             at ./crates/gpui/src/app/context.rs:314:38
+  31: <gpui::app::App>::update_window_id::<bool, <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}>::{closure#0}
+             at ./crates/gpui/src/app.rs:1366:26
+  32: <gpui::app::App>::update::<core::option::Option<bool>, <gpui::app::App>::update_window_id<bool, <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}>::{closure#0}>
+             at ./crates/gpui/src/app.rs:764:22
+  33: <gpui::app::App>::update_window_id::<bool, <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}>
+             at ./crates/gpui/src/app.rs:1360:14
+  34: <gpui::app::App as gpui::AppContext>::update_window::<bool, <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}>
+             at ./crates/gpui/src/app.rs:2182:14
+  35: <gpui::window::AnyWindowHandle>::update::<gpui::app::App, bool, <gpui::app::context::Context<editor::Editor>>::observe_in<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}::{closure#0}>
+             at ./crates/gpui/src/window.rs:4789:12
+  36: <gpui::app::context::Context<editor::Editor>>::observe_in::<zeta::ZetaEditPredictionProvider, <editor::Editor>::set_edit_prediction_provider<zeta::ZetaEditPredictionProvider>::{closure#0}::{closure#0}>::{closure#0}
+             at ./crates/gpui/src/app/context.rs:310:22
+  37: <alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>> as core::ops::function::FnMut<(&mut gpui::app::App,)>>::call_mut
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/boxed.rs:1973:9
+  38: <gpui::app::App>::apply_notify_effect::{closure#0}
+             at ./crates/gpui/src/app.rs:1301:41
+  39: <gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain::<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}
+             at ./crates/gpui/src/subscription.rs:132:17
+  40: <alloc::collections::btree::map::BTreeMap<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>>::retain::<<gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}>::{closure#0}
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1154:37
+  41: <alloc::collections::btree::map::ExtractIfInner<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>, core::ops::range::RangeFull>>::next::<<alloc::collections::btree::map::BTreeMap<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>>::retain<<gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}>::{closure#0}, alloc::alloc::Global>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:2013:16
+  42: <alloc::collections::btree::map::ExtractIf<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>, core::ops::range::RangeFull, <alloc::collections::btree::map::BTreeMap<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>>::retain<<gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}>::{closure#0}> as core::iter::traits::iterator::Iterator>::next
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1979:20
+  43: <alloc::collections::btree::map::ExtractIf<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>, core::ops::range::RangeFull, <alloc::collections::btree::map::BTreeMap<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>>::retain<<gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}>::{closure#0}> as core::iter::traits::iterator::Iterator>::fold::<(), core::iter::traits::iterator::Iterator::for_each::call<(usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>), core::mem::drop<(usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>)>>::{closure#0}>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:2601:34
+  44: <alloc::collections::btree::map::ExtractIf<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>, core::ops::range::RangeFull, <alloc::collections::btree::map::BTreeMap<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>>::retain<<gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}>::{closure#0}> as core::iter::traits::iterator::Iterator>::for_each::<core::mem::drop<(usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>)>>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:827:14
+  45: <alloc::collections::btree::map::BTreeMap<usize, gpui::subscription::Subscriber<alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>>::retain::<<gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain<<gpui::app::App>::apply_notify_effect::{closure#0}>::{closure#1}>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1154:46
+  46: <gpui::subscription::SubscriberSet<gpui::app::entity_map::EntityId, alloc::boxed::Box<dyn for<'a> core::ops::function::FnMut<(&'a mut gpui::app::App,), Output = bool>>>>::retain::<<gpui::app::App>::apply_notify_effect::{closure#0}>
+             at ./crates/gpui/src/subscription.rs:130:21
+  47: <gpui::app::App>::apply_notify_effect
+             at ./crates/gpui/src/app.rs:1301:14
+  48: <gpui::app::App>::flush_effects
+             at ./crates/gpui/src/app.rs:1203:30
+  49: <gpui::app::App>::finish_update
+             at ./crates/gpui/src/app.rs:776:18
+  50: <gpui::app::App>::update::<(), <gpui::app::App as gpui::AppContext>::update_entity<zeta::ZetaEditPredictionProvider, (), <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::{closure#3}>::{closure#0}>
+             at ./crates/gpui/src/app.rs:765:14
+  51: <gpui::app::App as gpui::AppContext>::update_entity::<zeta::ZetaEditPredictionProvider, (), <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::{closure#3}>
+             at ./crates/gpui/src/app.rs:2148:14
+  52: <gpui::app::async_context::AsyncApp as gpui::AppContext>::update_entity::<zeta::ZetaEditPredictionProvider, (), <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::{closure#3}>
+             at ./crates/gpui/src/app/async_context.rs:58:16
+  53: <gpui::app::entity_map::WeakEntity<zeta::ZetaEditPredictionProvider>>::update::<gpui::app::async_context::AsyncApp, (), <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::{closure#3}>::{closure#0}
+             at ./crates/gpui/src/app/entity_map.rs:708:32
+  54: <core::result::Result<gpui::app::entity_map::Entity<zeta::ZetaEditPredictionProvider>, anyhow::Error>>::map::<core::result::Result<(), anyhow::Error>, <gpui::app::entity_map::WeakEntity<zeta::ZetaEditPredictionProvider>>::update<gpui::app::async_context::AsyncApp, (), <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::{closure#3}>::{closure#0}>
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/result.rs:801:25
+  55: <gpui::app::entity_map::WeakEntity<zeta::ZetaEditPredictionProvider>>::update::<gpui::app::async_context::AsyncApp, (), <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::{closure#3}>
+             at ./crates/gpui/src/app/entity_map.rs:708:18
+  56: <zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}::{closure#0}::<i32>
+             at ./crates/zeta/src/zeta.rs:1479:18
+  57: <gpui::app::context::Context<zeta::ZetaEditPredictionProvider>>::spawn::<<zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}, ()>::{closure#0}::{closure#0}
+             at ./crates/gpui/src/app/context.rs:219:52
+  58: <gpui::app::App>::spawn::<<gpui::app::context::Context<zeta::ZetaEditPredictionProvider>>::spawn<<zeta::ZetaEditPredictionProvider as edit_prediction::EditPredictionProvider>::refresh::{closure#1}, ()>::{closure#0}, ()>::{closure#0}
+             at ./crates/gpui/src/app.rs:1424:44
+  59: <core::pin::Pin<alloc::boxed::Box<dyn core::future::future::Future<Output = ()>>> as core::future::future::Future>::poll
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/future/future.rs:124:9
+  60: <gpui::executor::spawn_local_with_source_location::Checked<core::pin::Pin<alloc::boxed::Box<dyn core::future::future::Future<Output = ()>>>> as core::future::future::Future>::poll
+             at ./crates/gpui/src/executor.rs:531:64
+  61: <async_task::raw::RawTask<gpui::executor::spawn_local_with_source_location::Checked<core::pin::Pin<alloc::boxed::Box<dyn core::future::future::Future<Output = ()>>>>, (), <gpui::executor::ForegroundExecutor>::spawn::inner<()>::{closure#0}, ()>>::run
+             at /Users/voz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/async-task-4.7.1/src/raw.rs:557:17
+  62: <async_task::runnable::Runnable>::run
+             at /Users/voz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/async-task-4.7.1/src/runnable.rs:781:18
+  63: gpui::platform::mac::dispatcher::trampoline
+             at ./crates/gpui/src/platform/mac/dispatcher.rs:106:10
+  64: <unknown>
+  65: <unknown>
+  66: <unknown>
+  67: <unknown>
+  68: <unknown>
+  69: <unknown>
+  70: <unknown>
+  71: <unknown>
+  72: <unknown>
+  73: <unknown>
+  74: <unknown>
+  75: <unknown>
+  76: <unknown>
+  77: <() as objc::message::MessageArguments>::invoke::<()>
+             at /Users/voz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/objc-0.2.7/src/message/mod.rs:128:17
+  78: objc::message::platform::send_unverified::<objc::runtime::Object, (), ()>
+             at /Users/voz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/objc-0.2.7/src/message/apple/mod.rs:27:9
+  79: objc::message::send_message::<objc::runtime::Object, (), ()>
+             at /Users/voz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/objc-0.2.7/src/message/mod.rs:178:5
+  80: <*mut objc::runtime::Object as cocoa::appkit::NSApplication>::run
+             at /Users/voz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cocoa-0.26.0/src/appkit.rs:628:9
+  81: <gpui::platform::mac::platform::MacPlatform as gpui::platform::Platform>::run
+             at ./crates/gpui/src/platform/mac/platform.rs:495:17
+  82: <gpui::app::Application>::run::<zed::main::{closure#6}>
+             at ./crates/gpui/src/app.rs:180:18
+  83: zed::main
+             at ./crates/zed/src/main.rs:376:9
+  84: zed::main
+             at ./crates/zed/src/zed-main.rs:7:5
+  85: <fn() as core::ops::function::FnOnce<()>>::call_once
+             at /Users/voz/.rustup/toolchains/1.89-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ops/function.rs:250:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
